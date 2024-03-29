@@ -1,0 +1,106 @@
+version: '3'
+services:
+  mariadb:
+    container_name: mariadb
+    networks:
+      - inception
+    build: requirements/mariadb
+    env_file: .env
+    volumes:
+      - mariadb:/var/lib/mysql
+    restart: unless-stopped
+    # expose:
+    #   - "3306"
+  nginx:
+    container_name: nginx
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - inception
+    depends_on:
+      - wordpress
+    build: requirements/nginx
+    env_file: .env
+    ports:
+      - "443:443"
+    restart: on-failure
+  wordpress:
+    container_name: wordpress
+    env_file: .env
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - inception
+    build: requirements/wordpress
+    depends_on:
+      - mariadb
+    restart: on-failure
+    # expose:
+    #   - "9000"
+
+volumes:
+  wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: '/Users/mel-kouc/data/wordpress'
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: '/Users/mel-kouc/data/mariadb'
+
+networks:
+  inception:
+    driver: bridge
+
+
+#---------------------------------------
+
+# version: '3'
+# services:
+#     mariadb:
+#         container_name: mariadb
+#         networks:
+#         - inception # à quel network il appartient
+#         build:
+#         context: requirements/mariadb # ou se trouve son Dockerfile
+#         dockerfile: Dockerfile # le nom du Dockerfile ?!
+#         env_file: .env # le fichier d'environnement pour transmettre les variables
+#         volumes: # Voir plus bas
+#         - mariadb:/var/lib/mysql
+#         restart: unless-stopped # redémarre tant qu'il n'est pas stoppé 
+#         expose: # le port à exposer
+#         - "3306"
+#     nginx:
+#         container_name: nginx
+#         volumes:
+#         - wordpress:/var/www/wordpress
+#         networks:
+#         - inception
+#         depends_on: # Nouvelle ligne, indiquant de ne pas démarrer NGINX tant que WordPress n'a pas démarré.
+#         - wordpress
+#         build: 
+#         context: requirements/nginx
+#         dockerfile: Dockerfile
+#         env_file: .env
+#         ports:
+#         - "443:443" # on indique le port qui sera exposé a la machine locale
+#         restart: on-failure # Ici nous changeons, le container redémarrera uniquement en cas de crash.
+#     wordpress:
+#         container_name: wordpress
+#         env_file: .env
+#         volumes:
+#         - wordpress:/var/www/wordpress
+#         networks:
+#         - inception
+#         build:
+#         context: requirements/wordpress
+#         dockerfile: Dockerfile
+#         depends_on: # WordPress démarrera uniquement après MariaDB (sinon il ne pourra pas configurer la base de données...)
+#         - mariadb
+#         restart: on-failure
+#         expose:
+#         - "9000"
