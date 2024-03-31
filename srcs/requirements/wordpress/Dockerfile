@@ -1,16 +1,7 @@
-
-#---------------------------------------------
-
 FROM debian:bullseye
 
-# ENV SQL_DATABASE=mydatabase \
-#     SQL_USER=myuser \
-#     SQL_PASSWORD=mypassword \
-#     SQL_ROOT_PASSWORD=myrootpassword
 
 RUN apt-get update
-
-RUN apt-get upgrade
 
 RUN apt-get -y install wget
 
@@ -30,6 +21,8 @@ RUN chmod +x wp-cli.phar
 
 RUN mv wp-cli.phar /usr/local/bin/wp
 
+COPY conf/www.conf /etc/php/7.4/fpm/pool.d/
+
 # Copy wp.sh script into the image
 COPY ./tools/wp.sh ./tools/wp.sh
 
@@ -38,19 +31,4 @@ RUN chmod +x ./tools/wp.sh
 
 
 # Start PHP-FPM
-ENTRYPOINT ["./tools/wp.sh"]
-
-
-#-------------------------------------
-# RUN apt-get update && apt install -y curl
-
-# RUN apt install -y php php-mysql php-fpm mariadb-client
-
-# RUN sed -i 's#listen = /run/php/php7.4-fpm.sock#listen = 0.0.0.0:9000#' /etc/php/7.4/fpm/pool.d/www.conf
-
-# COPY tools/wp.sh /copy/
-
-# RUN chmod +x /copy/wp.sh
-
-# CMD ["./copy/wp.sh"]
-#-------------------------------------
+CMD ["./tools/wp.sh"]
