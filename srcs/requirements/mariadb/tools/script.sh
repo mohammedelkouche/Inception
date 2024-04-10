@@ -6,7 +6,6 @@ service mariadb start
 # Wait for MariaDB to start
 sleep 5
 
-
 # Create database
 mysql -e "CREATE DATABASE IF NOT EXISTS ${SQL_DATABASE};"
 
