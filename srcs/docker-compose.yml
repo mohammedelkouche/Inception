@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   mariadb:
-    image: mariadb
+    image: mariadb:databases
     container_name: mariadb
     networks:
       - inception
@@ -11,7 +11,7 @@ services:
       - mariadb:/var/lib/mysql
     restart: unless-stopped
   nginx:
-    image: nginx
+    image: nginx:server
     container_name: nginx
     volumes:
       - wordpress:/var/www/wordpress
@@ -25,7 +25,7 @@ services:
       - "443:443"
     restart: on-failure
   wordpress:
-    image: wordpress
+    image: wordpress:website
     container_name: wordpress
     env_file: .env
     volumes:

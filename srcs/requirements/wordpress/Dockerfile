@@ -24,7 +24,7 @@ RUN mv wp-cli.phar /usr/local/bin/wp
 COPY conf/www.conf /etc/php/7.4/fpm/pool.d/
 
 # Copy wp.sh script into the image
-COPY ./tools/wp.sh ./tools/wp.sh
+COPY ./tools/wp.sh ./tools/wp.sh 
 
 # Make wp.sh executable
 RUN chmod +x ./tools/wp.sh
